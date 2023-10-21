@@ -1,0 +1,184 @@
+#version 330 core
+layout (location = 0) in vec3 aPos;
+//layout (location = 1) in vec3 aColor;
+//layout (location = 1) in vec2 aTexCoord;
+
+out vec3 ourColor;
+//out vec2 TexCoord;
+
+//my playing around
+//uniform float offsetX;
+//uniform float offsetY;
+
+//uniform mat4 transform;//Transform. chapter
+
+
+//Coord. Sys. chapter
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+//cycle colors
+uniform int colorSet;
+
+//plant sway animation
+uniform float systime;
+
+
+void main()
+{
+    
+    //gl_Position = vec4(aPos, 1.0); //DFEAULT BEHAVIOR
+    //gl_Position = vec4(aPos.x + offset, aPos.y * -1.0f, 0.0, 1.0); //Upside down
+    
+    //rotating
+    //gl_Position = vec4(aPos.x + offsetX, aPos.y + offsetY, aPos.z, 1.0);
+    
+
+    //ourColorB = aColor; //normal
+    //ourColorB = aPos; //exercise 3 of shader
+
+    //old crap
+    //vec3 mod = vec3(.3,.3,.3);
+    //vec3 newcolor = aColor.xyz + mod;
+    //ourColor = newcolor;
+
+    //Texture Chapter
+    //gl_Position = vec4(aPos, 1.0f);
+    //ourColor = aColor;
+    //ourColor = aPos;
+    //TexCoord = aTexCoord;
+
+    //coord sys chapter
+    //gl_Position = projection * view * model * vec4(aPos, 1.0);
+
+    //gl_Position = vec4(aPos, 1.0); //DFEAULT BEHAVIOR
+    
+    //ourColor = vec3(0.8, 0.0, 0.2); //normal
+    //ourColor = aPos/50;
+
+    //Tree
+    //gl_Position = projection * view * model * vec4(aPos, 1.0); //camera --NO SWAY
+
+    float timeFactor = 0.6;
+    float swaySeverity = 0.05;
+    float swayX = + swaySeverity*aPos.y*((sin(systime*timeFactor) + 0) / 2);
+    float swayZ = + swaySeverity*aPos.y*((sin(systime*timeFactor + 1) + 0) / 2);
+    //gl_Position = projection * view * model * vec4(aPos.x + swaySeverity*aPos.y*((sin(systime*timeFactor) + 0) / 2), aPos.y, aPos.z, 1.0); //camera + sway v1
+    gl_Position = projection * view * model * vec4(aPos.x + swayX, aPos.y, aPos.z + swayZ, 1.0); //camera + sway v2
+    if(colorSet == 0){
+        ourColor = vec3(1.0 - (aPos.y/40),0.0*(aPos.x/10 + 10) ,(aPos.y/40)); //2 gradient pink blue
+    }
+    else if (colorSet == 1){
+        ourColor = vec3((aPos.y/40),0.0*(aPos.x/10 + 10) ,1.0-(aPos.y/40)); //2 gradient pink blue
+    }
+    else if (colorSet == 2){
+        ourColor = vec3(0.0*(aPos.y/10),0.75*((aPos.y+10)/40) ,1.0-(0.75*((aPos.y-10)/20))); //2 gradient green blue
+    }
+    else if (colorSet == 3){
+        ourColor = vec3(0.0*(aPos.y/10), 1.0-(0.75*((aPos.y-10)/20)), 0.75*((aPos.y+10)/40)); //2 gradient green blue
+    }
+    else if (colorSet == 4){
+        ourColor = vec3(1.0*(abs(aPos.z/10)),1.0*(aPos.y/40) ,(abs(aPos.x)/10)); //3 gradient 1
+    }
+    else if(colorSet == 5){
+        ourColor = vec3(1.0*(abs(aPos.x/10)),1.0*(aPos.y/40) ,(abs(aPos.z)/10)); //3 gradient 2
+    }
+    else if(colorSet == 6){
+        ourColor = vec3(0.0*(aPos.y/40), (aPos.y/40) ,(aPos.y/40)); //1 gradient cyan
+    }
+    else if(colorSet == 7){
+        ourColor = vec3((aPos.y/40),(aPos.y/40) ,0.0*(aPos.y/40)); //1 gradient yellow
+    }
+    else if(colorSet == 8){
+        ourColor = vec3((aPos.y/40),(aPos.y/40) ,(aPos.y/40)); //1 gradient white
+    }
+    else if(colorSet == 9){
+        ourColor = vec3((aPos.y/30),0.0*(aPos.y/40) ,0.0*(aPos.y/40)); //1 gradient red
+    }
+    else if(colorSet == 10){
+        ourColor = vec3(0.0*(aPos.y/30),(aPos.y/40) ,0.0*(aPos.y/40)); //1 gradient green
+    }
+    else if(colorSet == 11){
+        ourColor = vec3(0.0,0.0 ,(aPos.y/20)); //1 gradient blue
+    }
+    else if (colorSet == 12){
+        ourColor = vec3(1.0-(0.75*((aPos.y-10)/20)), 0.75*((aPos.y+10)/40), 0.0*(aPos.y/10)); //2 gradient red green
+    }
+    else{
+        ourColor = vec3((aPos.y/40),0.0*(aPos.x/10 + 10) ,(aPos.y/40)); //1 gradient pink
+    }
+    
+    
+    //ourColor = vec3(sin(aPos.y/50)/2 + 0.5f,0.0 ,1.0f - (sin(aPos.y/50)/2 + 0.5f)); //gradient2 wip
+}
+
+
+
+
+
+
+
+
+
+
+#version 330 core
+out vec4 FragColor;
+  
+in vec3 ourColor; // the input variable from the vertex shader (same name and same type)  
+//in vec2 TexCoord;
+
+//uniform vec4 uniColor;
+//uniform float pulse; 
+//uniform float systime;
+
+//texture
+//uniform sampler2D ourTexture;
+
+//uniform sampler2D texture1;
+//uniform sampler2D texture2;
+
+//texture visability
+//uniform float mixValue;
+
+void main()
+{
+    //FragColor = vec4(uniColor, uniColor, uniColor, 1.0);
+    //FragColor = vec4(.9f, .2f, .3f, 1.0f);
+    
+    //---using uniform
+    //FragColor = uniColor;
+
+    //--original output
+    //FragColor = vec4(ourColorB, 1.0f);
+
+    //pulsing
+    //FragColor = vec4(ourColorB.r + pulse, ourColorB.g + pulse, ourColorB.b + pulse, 1.0f);
+    
+
+    //simple fractals
+
+    //float angle = systime*0.15;
+    //vec2 coords = vec2(ourColor.x, ourColor.y);
+    //for(float i = 0.0; i < 32.0; i+=1.0){
+    //coords = abs(coords);
+    //coords -= 0.5;
+    //coords *= 1.05;
+    //coords *= mat2( cos(angle), -sin(angle), sin(angle), cos(angle) );
+    //}
+    //FragColor = vec4(length(coords + vec2(0.1, 0.25)), length(coords + vec2(-0.34, 0.77)), length(coords + vec2(-0.2, 0.432)), 1.0);
+
+
+    //texture
+    //FragColor = texture(ourTexture, TexCoord) * vec4(ourColor, 1.0);;
+    //2 textures 
+    
+    //FragColor = mix(texture(texture1, vec2(0.1*(1.0 - TexCoord.x), 0.1*TexCoord.y)), texture(texture2, vec2(2*(1.0 - TexCoord.x), 2*TexCoord.y)), 0.2);
+    
+    //change between 2 textures with user input 
+    //FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), mixValue);
+
+
+    //--original output
+    FragColor = vec4(ourColor, 1.0f);
+} 
